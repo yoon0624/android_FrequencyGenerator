@@ -1,16 +1,23 @@
 package com.example.yoon.testtonegenerate;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.ToneGenerator;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -30,18 +37,44 @@ public class MainActivity extends AppCompatActivity {
 
     TextView tv_samplerate, tv_frequency, tv_title, tv_value;
     Button btn_start, btn_freqdn, btn_frequp;
+    private SeekBar volumeControl = null;
 
     boolean play_state = true;
     Handler handler = new Handler();
+
+    private String[] permissions = {Manifest.permission.MODIFY_AUDIO_SETTINGS};
+    private final int PERMISSION_CODE_MODIFY_AUDIO_SETTINGS = 100;
+    private boolean permissionstate= false;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch(requestCode){
+            case PERMISSION_CODE_MODIFY_AUDIO_SETTINGS:
+                permissionstate = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                break;
+        }
+    }
+
+    public void setPermissions(){
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, permissions, PERMISSION_CODE_MODIFY_AUDIO_SETTINGS);
+        }
+    }
 
     void setView() {
         tv_frequency = (TextView) findViewById(R.id.tv_freq);
         tv_samplerate = (TextView) findViewById(R.id.tv_sample);
         tv_title = (TextView) findViewById(R.id.tv_title);
         tv_value = (TextView) findViewById(R.id.tv_state);
+
         btn_start = (Button) findViewById(R.id.btn_Start);
         btn_freqdn = (Button) findViewById(R.id.btn_freqdn);
         btn_frequp = (Button) findViewById(R.id.btn_frequp);
+
+        volumeControl = (SeekBar) findViewById(R.id.seekbar);
+
     }
 
     void ViewWrite() {
@@ -75,8 +108,28 @@ public class MainActivity extends AppCompatActivity {
                 ViewWrite();
             }
         });
-
-
+//        volumeControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//
+//
+//            int progressChanged= 0;
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                progressChanged = progress;
+//                // 0=< progress <= 100
+//                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,progress*(nMax/100), 0);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                // TODO Auto-generated method stub
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                Toast.makeText(MainActivity.this,"seek bar progress:"+progressChanged,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 
@@ -84,11 +137,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setPermissions();
         setView();
         btnSet();
         ViewWrite();
-
         getTone();
+        final AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int nMax = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int nCurrentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        volumeControl.setMax(nMax);
+        volumeControl.setProgress(nCurrentVolume);
+        volumeControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+
+            int progressChanged= 0;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progressChanged = progress;
+                // 0=< progress <= 100
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,progress, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(MainActivity.this,"seek bar progress:"+progressChanged,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
 
         final TimerTask tt = new TimerTask() {
 
