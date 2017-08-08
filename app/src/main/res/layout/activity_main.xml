@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.yoon.testtonegenerate.MainActivity">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        />
+
+    <TextView
+        android:id="@+id/tv_freq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Freq"
+        android:layout_alignBaseline="@+id/btn_frequp"/>
+
+
+    <TextView
+        android:id="@+id/tv_sample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="sample"
+        android:layout_below="@+id/tv_title"
+        />
+
+    <TextView
+        android:id="@+id/tv_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="State"
+        android:layout_below="@+id/tv_sample"/>
+
+    <Button
+        android:id="@+id/btn_Start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tv_state"
+        android:layout_marginTop="50dp"
+        android:text="Start" />
+
+    <Button
+        android:id="@+id/btn_frequp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="false"
+        android:layout_below="@+id/btn_Start"
+        android:layout_toRightOf="@+id/btn_Start"
+        android:layout_marginTop="30dp"
+        android:text="freq up" />
+    <Button
+        android:id="@+id/btn_freqdn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="false"
+        android:layout_below="@+id/btn_Start"
+        android:layout_toStartOf="@+id/btn_Start"
+        android:layout_marginTop="30dp"
+        android:text="freq dn" />
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_frequp"
+        android:layout_marginTop="50dp"
+        />
+
+</RelativeLayout>
